@@ -1,0 +1,32 @@
+[
+    {
+      "topic": "Programming",
+      "description": "NET, Java, Python, Javascipt",
+      "role": "Developer"
+    },
+    {
+      "topic": "Dev-method",
+      "description": "Agile, Waterfall",
+      "role": "Developer"
+    },
+    {
+      "topic": "Test-tool",
+      "description": "JUnit5, Mocha, PyTest",
+      "role": "Developer"
+    },
+    {
+      "topic": "Infrastructure code",
+      "description": "Terraform, Ansible, Chef, Puppet",
+      "role": "SRE"
+    },
+    {
+      "topic": "Cloud compute",
+      "description": "Azure, AWS, GCP",
+      "role": "SRE"
+    },
+    {
+      "topic": "Unix admin",
+      "description": "Python, Bash, Perl",
+      "role": "SRE"
+    }
+]

@@ -1,0 +1,57 @@
+[
+    {
+      "path": "/api/profession",
+      "name": "Profession Api",
+      "type": "api",
+      "roles": [
+        {
+          "name": "Developer.Read.All",
+          "access": "Read"
+        },
+        {
+          "name": "SRE.Read.All",
+          "access": "Read"
+        },
+        {
+          "name": "Developer.ReadWrite.All",
+          "access": "ReadWrite"
+        },
+        {
+          "name": "SRE.ReadWrite.All",
+          "access": "ReadWrite"
+        }
+      ]
+    },
+    {
+      "path": "/admin-page",
+      "name": "Admin Page",
+      "type": "web",
+      "roles": [
+        "Profession.Admin"
+      ]
+    },
+    {
+      "path": "/profession-page",
+      "name": "Profession Page",
+      "type": "web",
+      "roles": [
+        "Developer.Read.All",
+        "SRE.Read.All",
+        "Developer.ReadWrite.All",
+        "SRE.ReadWrite.All",
+        "Profession.Admin"
+      ]
+    },
+    {
+      "path": "/dashboard-page",
+      "name": "Dashboard Page",
+      "type": "web",
+      "roles": [
+        "Developer.Read.All",
+        "SRE.Read.All",
+        "Developer.ReadWrite.All",
+        "SRE.ReadWrite.All",
+        "Profession.Admin"
+      ]
+    }
+  ]

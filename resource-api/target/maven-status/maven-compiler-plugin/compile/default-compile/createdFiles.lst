@@ -1,0 +1,6 @@
+com\microsoft\azuresamples\msal4j\msidentityspringbootwebapi\MsIdentitySpringBootWebApi.class
+com\microsoft\azuresamples\msal4j\msidentityspringbootwebapi\ACL.class
+com\microsoft\azuresamples\msal4j\msidentityspringbootwebapi\SampleController.class
+com\microsoft\azuresamples\msal4j\msidentityspringbootwebapi\SecurityConfig.class
+com\microsoft\azuresamples\msal4j\msidentityspringbootwebapi\Course.class
+com\microsoft\azuresamples\msal4j\msidentityspringbootwebapi\SampleController$DateResponse.class

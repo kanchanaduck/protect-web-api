@@ -1,0 +1,15 @@
+# If we configure the azure.activedirectory.client-id or azure.activedirectory.app-id-uri will be to check the audience.
+# In v2.0 tokens, this is always the client ID of the API, while in v1.0 tokens it can be the client ID or the resource URI used in the request.
+# If you are using v1.0 tokens, configure both to properly complete the audience validation.
+
+server:
+  port: 8082
+
+azure:
+ activedirectory:
+   client-id: bdff0f3e-05d4-4ac6-91ce-3995c94f5529
+   app-id-uri: api://4590bf39-28a3-4536-8008-4af5f19d668c
+
+spring:
+  datasource:
+    url: jdbc:sqlite:profession.db
