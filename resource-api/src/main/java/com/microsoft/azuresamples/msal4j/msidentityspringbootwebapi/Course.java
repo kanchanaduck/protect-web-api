@@ -3,13 +3,16 @@ package com.microsoft.azuresamples.msal4j.msidentityspringbootwebapi;
 public class Course {
     private String topic;
     private String description;
+    private Boolean readwrite=true;
 
     public Course(
             String topic,
-            String description
+            String description,
+            Boolean readwrite
     ) {
         this.topic = topic;
         this.description = description;
+        this.readwrite= readwrite;
     }
 
     public String getTopic() {
@@ -26,5 +29,13 @@ public class Course {
     
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getReadwrite() {
+        return this.readwrite;
+    }
+    
+    public void setReadwrite(Boolean readwrite) {
+        this.readwrite = readwrite;
     }
 }

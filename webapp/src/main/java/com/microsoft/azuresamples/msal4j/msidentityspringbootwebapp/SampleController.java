@@ -37,6 +37,9 @@ public class SampleController {
     @Value( "${app.api.date-endpoint}" )
     private String apiDateEndpoint;
 
+    @Value( "${app.api.roles-endpoint}" )
+    private String apiRolesEndpoint;
+
     @Value( "${app.api.courses-endpoint}" )
     private String apiCoursesEndpoint;
 
@@ -58,13 +61,7 @@ public class SampleController {
      */
     @GetMapping(value = {"/", "sign_in_status", "/index"})
     public String status(Model model, Principal principal) {
-        // Check is authenticated
-        if(principal == null){
-            return hydrateUI(model, "status");
-        }
-        else{
-            return hydrateUI(model, "status");
-        }
+        return hydrateUI(model, "status");
     }
 
     /**
@@ -115,28 +112,8 @@ public class SampleController {
         return hydrateUI(model, "api");
     }
 
-    @GetMapping(value = {"/admin-page", "/profession-page", "/dashboard-page"})
+    @GetMapping(value = {"/admin-page", "/profession-page"})
     public String callCourseAPI(Model model, @RegisteredOAuth2AuthorizedClient("web-api") OAuth2AuthorizedClient apiAuthorizedClient) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String path = req.getServletPath();
-        String role;
-
-        System.out.println(authentication.getAuthorities().stream());
-        /* boolean readwrite = authentication.getAuthorities().stream().anyMatch(
-                            r -> r.getAuthority().equals("APPROLE_Developer.ReadWrite.All") || 
-                            r.getAuthority().equals("APPROLE_SRE.ReadWrite.All")  ||
-                            r.getAuthority().equals("APPROLE_Profession.Admin")  );
-
-        boolean show_sre = authentication.getAuthorities().stream().anyMatch(
-                            r -> r.getAuthority().equals("APPROLE_SRE.Read.All") || 
-                            r.getAuthority().equals("APPROLE_SRE.ReadWrite.All")  );
-        
-        boolean show_developer = authentication.getAuthorities().stream().anyMatch(
-            r -> r.getAuthority().equals("APPROLE_Developer.Read.All") || 
-            r.getAuthority().equals("APPROLE_Developer.ReadWrite.All")  ); */
-
-        
 
         final WebClient apiClient = WebClient.builder()
             .baseUrl(apiAddress)
@@ -145,20 +122,60 @@ public class SampleController {
 
         System.out.println(apiAuthorizedClient.getAccessToken().getTokenValue());
 
-        ArrayList apiResp;
+        ArrayList apiRoles;
         try {
-            String response = apiClient.get().uri(apiCoursesEndpoint+"/Developer").retrieve().toEntity(String.class).block().getBody();
-            // apiResp =  new ObjectMapper().readValue(response, HashMap.class);
-            apiResp =  new ObjectMapper().readValue(response,  ArrayList.class);
-            System.out.println(apiResp);
+            String response = apiClient.get().uri(apiRolesEndpoint).retrieve().toEntity(String.class).block().getBody();
+            // apiRoles =  new ObjectMapper().readValue(response, HashMap.class);
+            apiRoles =  new ObjectMapper().readValue(response,  ArrayList.class);
+            // System.out.println(apiRoles);
         } catch (Exception ex) {
             System.out.println(ex);
-            apiResp = new ArrayList<>();
-            // apiResp.add({"Type": "Error","Message": ex});
+            apiRoles = new ArrayList<>();
+            // apiCourses.add({"Type": "Error","Message": ex});
         }
 
-        model.addAttribute("apiResp", apiResp);
-        return hydrateUI(model, "admin-page");
+        ArrayList apiCourses;
+        try {
+            String response = apiClient.get().uri(apiCoursesEndpoint).retrieve().toEntity(String.class).block().getBody();
+            // apiCourses =  new ObjectMapper().readValue(response, HashMap.class);
+            apiCourses =  new ObjectMapper().readValue(response,  ArrayList.class);
+            // System.out.println(apiCourses);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            apiCourses = new ArrayList<>();
+            // apiCourses.add({"Type": "Error","Message": ex});
+        }
+
+        String roles = String.join(", ", apiRoles);
+        Boolean readwrite = false;
+        String route = req.getRequestURI();
+        String fragment = "content";
+
+        System.out.println(route);
+
+        if(roles.contains("Developer.ReadWrite.All") || roles.contains("SRE.ReadWrite.All") || roles.contains("Profession.Admin")){
+            readwrite = true;
+        }
+
+        if(route.equals("/admin-page")){
+            if(!roles.contains("Profession.Admin")){
+                fragment = "401";
+            }
+            else{
+                fragment = "admin";
+            }
+        }
+        else{
+            if(roles.isEmpty()){
+                fragment = "401";
+            }
+        }
+
+        model.addAttribute("apiCourses", apiCourses);
+        model.addAttribute("apiRoles", apiRoles);
+        model.addAttribute("roles", roles);
+        model.addAttribute("readwrite", readwrite);
+        return hydrateUI(model, fragment);
     }
 
     // survey endpoint - did the sample address your needs?

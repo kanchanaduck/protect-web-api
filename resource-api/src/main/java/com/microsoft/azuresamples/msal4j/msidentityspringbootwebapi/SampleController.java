@@ -3,12 +3,12 @@
 
 package com.microsoft.azuresamples.msal4j.msidentityspringbootwebapi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-// import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-// import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,30 +31,47 @@ public class SampleController {
         return new DateResponse().toString();
     }
 
-    @GetMapping("api/courses/Developer")
+    @GetMapping("api/roles")
+    @ResponseBody
+    @PreAuthorize("hasAuthority('SCOPE_access_as_user')")
+	public List<String> getRoles()   
+    {  
+        return Arrays.asList("Developer.Read.All","SRE.ReadWrite.All");
+        // return Arrays.asList("Profession.Admin");
+        // return Arrays.asList();
+    }  
+
+    @GetMapping("api/courses")
     @ResponseBody
     @PreAuthorize("hasAuthority('SCOPE_access_as_user')")
 	public List<Course> getAllDeveloperCourses()   
     {  
-        return List.of(
-            new Course("Programming", "NET, Java, Python, Javascipt"),
-            new Course("Dev-method", "Agile, Waterfall"),
-            new Course("Test-tool", "JUnit5, Mocha, PyTest")
-        );
-    }  
-        
-    @GetMapping("api/courses/sre")
-    @ResponseBody
-    @PreAuthorize("hasAuthority('SCOPE_access_as_user')")
-	public List<Course> getAllSRECourses()   
-    {  
-        return List.of(
-            new Course("Infrastructure-Code", "Terrafrom, Ansible, Cheft, Puppet"),
-            new Course("Cloud-Compute", "AWS, Azure, GCP"),
-            new Course("Unix-Admin", "Bash, Perl")
-        );
-    } 
+        List<String> roles = getRoles();
+        Boolean readwrite_dev=true;
+        Boolean readwrite_sre=true;
 
+
+        if(roles.contains("Developer.Read.All")){
+            readwrite_dev=false;
+        }
+
+        if(roles.contains("SRE.Read.All")){
+            readwrite_sre=false;
+        }
+
+        List<Course> courses = new ArrayList<Course>();
+        if(roles.contains("Developer.Read.All") || roles.contains("Developer.ReadWrite.All") || roles.contains("Profession.Admin") ){
+            courses.add(new Course("Programming", "NET, Java, Python, Javascipt",readwrite_dev));
+            courses.add(new Course("Dev-method", "Agile, Waterfall",readwrite_dev));
+            courses.add(new Course("Test-tool", "JUnit5, Mocha, PyTest",readwrite_dev));
+        }
+        if(roles.contains("SRE.Read.All") || roles.contains("SRE.ReadWrite.All") || roles.contains("Profession.Admin") ){
+            courses.add(new Course("Infrastructure-Code", "Terrafrom, Ansible, Cheft, Puppet",readwrite_sre));
+            courses.add(new Course("Cloud-Compute", "AWS, Azure, GCP",readwrite_sre));
+            courses.add(new Course("Unix-Admin", "Bash, Perl",readwrite_sre));
+        }
+        return courses;
+    }  
     private class DateResponse {
         private String humanReadable;
         private String timeStamp;
